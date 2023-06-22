@@ -1,4 +1,3 @@
-import './App.css';
 import 'semantic-ui-css/semantic.min.css'
 import { Button, Form, Grid, Header } from 'semantic-ui-react'
 import { PDFDocument } from 'pdf-lib'
