@@ -27,7 +27,7 @@ function App() {
 
       const fontSize = 15;
       const font = await coverPDF.embedFont('Helvetica-Bold');
-      
+
       firstPage.drawText(sheetNr, {
         x: 155,
         y: height - 83,
@@ -122,7 +122,7 @@ function App() {
     <div className="App">
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 1200 }}>
-          <Header as='h2' color='teal' textAlign='center'>
+          <Header as='h1' color='teal' textAlign='center'>
             Modellierung Cover Sheet fill out and merger
           </Header>
           <Form size='large' onSubmit={handleSubmit}>
@@ -167,6 +167,9 @@ function App() {
               </Grid.Row>
             </Grid>
 
+            <Header as='h3' color='teal' textAlign='center'>
+              Task PDF
+            </Header>
             <Form.Input type="file" name="file" onChange={changeHandler} />
 
             {isFilePicked ? (
