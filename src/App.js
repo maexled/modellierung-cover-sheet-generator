@@ -6,15 +6,16 @@ import { useState } from 'react';
 
 function App() {
 
+  const [sheetNr, setSheetNr] = useState("");
+  const [prename1, setPrename1] = useState("");
+  const [prename2, setPrename2] = useState("");
+  const [name1, setName1] = useState("");
+  const [name2, setName2] = useState("");
+  const [matrNr1, setMatrNr1] = useState("");
+  const [matrNr2, setMatrNr2] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const sheetNr = state["sheetNr"] ? state["sheetNr"] : "";
-    const prename1 = state["prename-1"] ? state["prename-1"] : "";
-    const prename2 = state["prename-2"] ? state["prename-2"] : "";
-    const name1 = state["name-1"] ? state["name-1"] : "";
-    const name2 = state["name-2"] ? state["name-2"] : "";
-    const matrNr1 = state["matrNr-1"] ? state["matrNr-1"] : "";
-    const matrNr2 = state["matrNr-2"] ? state["matrNr-2"] : "";
 
     // create async function to be able to use await
     const createCoverSheet = async () => {
@@ -100,10 +101,6 @@ function App() {
     createCoverSheet();
   }
 
-  const state = {}
-
-  const handleChange = (e, { name, value }) => state[name] = value;
-
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
 
@@ -126,7 +123,7 @@ function App() {
           </Header>
           <Form size='large' onSubmit={handleSubmit}>
 
-            <Form.Input fluid icon='sort numeric up' iconPosition='left' type='number' placeholder='Blatt Nummer' name="sheetNr" onChange={handleChange} />
+            <Form.Input fluid icon='sort numeric up' iconPosition='left' type='number' placeholder='Blatt Nummer' name="sheetNr" onChange={(e) => setSheetNr(e.target.value)} />
             <Grid columns={2} divided>
               <Grid.Row>
                 <Grid.Column>
@@ -142,26 +139,26 @@ function App() {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-1" onChange={handleChange} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-1" onChange={(e) => setPrename1(e.target.value)} />
                 </Grid.Column>
                 <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-2" onChange={handleChange} />
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-1" onChange={handleChange} />
-                </Grid.Column>
-                <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-2" onChange={handleChange} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-2" onChange={(e) => setPrename2(e.target.value)} />
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-1" onChange={handleChange} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-1" onChange={(e) => setName1(e.target.value)} />
                 </Grid.Column>
                 <Grid.Column>
-                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-2" onChange={handleChange} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-2" onChange={(e) => setName2(e.target.value)} />
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column>
+                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-1" onChange={(e) => setMatrNr1(e.target.value)} />
+                </Grid.Column>
+                <Grid.Column>
+                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-2" onChange={(e) => setMatrNr2(e.target.value)} />
                 </Grid.Column>
               </Grid.Row>
             </Grid>
