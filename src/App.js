@@ -18,7 +18,7 @@ function App() {
 
     // create async function to be able to use await
     const createCoverSheet = async () => {
-      const coverPDF = await PDFDocument.load(await fetch('/deckblatt_mod_ss23.pdf').then((res) => res.arrayBuffer()));
+      const coverPDF = await PDFDocument.load(await fetch(process.env.PUBLIC_URL + '/deckblatt_mod_ss23.pdf').then((res) => res.arrayBuffer()));
 
       const pages = coverPDF.getPages();
       const firstPage = pages[0];
