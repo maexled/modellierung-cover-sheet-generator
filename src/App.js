@@ -1,18 +1,29 @@
 import 'semantic-ui-css/semantic.min.css'
-import { Button, Form, Grid, Header } from 'semantic-ui-react'
+import { Button, Checkbox, Form, Grid, Header } from 'semantic-ui-react'
 import { PDFDocument } from 'pdf-lib'
 import { saveAs } from 'file-saver';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+class Student {
+  constructor(prename, name, matrNr) {
+    this.prename = prename;
+    this.name = name;
+    this.matrNr = matrNr;
+  }
+}
 
 function App() {
 
+  const [student1, setStudent1] = useState(new Student("", "", ""));
+  const [student2, setStudent2] = useState(new Student("", "", ""));
+
   const [sheetNr, setSheetNr] = useState("");
-  const [prename1, setPrename1] = useState("");
-  const [prename2, setPrename2] = useState("");
-  const [name1, setName1] = useState("");
-  const [name2, setName2] = useState("");
-  const [matrNr1, setMatrNr1] = useState("");
-  const [matrNr2, setMatrNr2] = useState("");
+
+  const [saveStudents, setSaveStudents] = useState(false);
+
+  useEffect(() => {
+    loadStudentsFromLocalStorage();
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -35,42 +46,42 @@ function App() {
         font: font,
       });
 
-      firstPage.drawText(name1, {
+      firstPage.drawText(student1.name, {
         x: 75,
         y: height - 140,
         size: fontSize,
         font: font,
       });
 
-      firstPage.drawText(name2, {
+      firstPage.drawText(student2.name, {
         x: 75,
         y: height - 170,
         size: fontSize,
         font: font,
       });
 
-      firstPage.drawText(prename1, {
+      firstPage.drawText(student1.prename, {
         x: 230,
         y: height - 140,
         size: fontSize,
         font: font,
       });
 
-      firstPage.drawText(prename2, {
+      firstPage.drawText(student2.prename, {
         x: 230,
         y: height - 170,
         size: fontSize,
         font: font,
       });
 
-      firstPage.drawText(matrNr1, {
+      firstPage.drawText(student1.matrNr, {
         x: 380,
         y: height - 140,
         size: fontSize,
         font: font,
       });
 
-      firstPage.drawText(matrNr2, {
+      firstPage.drawText(student2.matrNr, {
         x: 380,
         y: height - 170,
         size: fontSize,
@@ -79,10 +90,11 @@ function App() {
 
       if (isFilePicked) {
         const reader = new FileReader();
-        const mergedPdf = await PDFDocument.create();
         console.log(selectedFile);
         reader.readAsArrayBuffer(selectedFile);
         reader.onload = async () => {
+          const mergedPdf = await PDFDocument.create();
+
           const taskPDF = await PDFDocument.load(reader.result);
           const copiedPagesA = await mergedPdf.copyPages(coverPDF, coverPDF.getPageIndices());
           copiedPagesA.forEach((page) => mergedPdf.addPage(page));
@@ -90,15 +102,37 @@ function App() {
           const copiedPagesB = await mergedPdf.copyPages(taskPDF, taskPDF.getPageIndices());
           copiedPagesB.forEach((page) => mergedPdf.addPage(page));
 
+          mergedPdf.setCreator("Modellierung Cover Sheet fill out and merger (https://maexled.github.io/modellierung-cover-sheet-generator/)");
+
           const blob = new Blob([await mergedPdf.save()], { type: "application/pdf" });
-          const sheetName = "A" + sheetNr + "_" + name1  + "_" + name2 + ".pdf";
+          const sheetName = "A" + sheetNr + "_" + student1.name + "_" + student2.name + ".pdf";
           saveAs(blob, sheetName);
         };
       } else {
         alert("No file selected!");
       }
+
+      if (saveStudents) {
+        saveStudentsInLocalStorage();
+      }
     };
     createCoverSheet();
+  }
+
+  function saveStudentsInLocalStorage() {
+    localStorage.setItem("student1", JSON.stringify(student1));
+    localStorage.setItem("student2", JSON.stringify(student2));
+  }
+
+  function loadStudentsFromLocalStorage() {
+    const student1 = JSON.parse(localStorage.getItem("student1"));
+    const student2 = JSON.parse(localStorage.getItem("student2"));
+    if (student1 != null) {
+      setStudent1(student1);
+    }
+    if (student2 != null) {
+      setStudent2(student2);
+    }
   }
 
   const [selectedFile, setSelectedFile] = useState();
@@ -139,26 +173,26 @@ function App() {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-1" onChange={(e) => setPrename1(e.target.value)} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-1" value={student1.prename} onChange={(e) => setStudent1({ ...student1, prename: e.target.value })} />
                 </Grid.Column>
                 <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-2" onChange={(e) => setPrename2(e.target.value)} />
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-1" onChange={(e) => setName1(e.target.value)} />
-                </Grid.Column>
-                <Grid.Column>
-                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-2" onChange={(e) => setName2(e.target.value)} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Vorname' name="prename-2" value={student2.prename} onChange={(e) => setStudent2({ ...student2, prename: e.target.value })} />
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-1" onChange={(e) => setMatrNr1(e.target.value)} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-1" value={student1.name} onChange={(e) => setStudent1({ ...student1, name: e.target.value })} />
                 </Grid.Column>
                 <Grid.Column>
-                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-2" onChange={(e) => setMatrNr2(e.target.value)} />
+                  <Form.Input fluid icon='user' iconPosition='left' placeholder='Nachname' name="name-2" value={student2.name} onChange={(e) => setStudent2({ ...student2, name: e.target.value })} />
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column>
+                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-1" value={student1.matrNr} onChange={(e) => setStudent1({ ...student1, matrNr: e.target.value })} />
+                </Grid.Column>
+                <Grid.Column>
+                  <Form.Input fluid icon='student' iconPosition='left' placeholder='Matrikelnumer' name="matrNr-2" value={student2.matrNr} onChange={(e) => setStudent2({ ...student2, matrNr: e.target.value })} />
                 </Grid.Column>
               </Grid.Row>
             </Grid>
@@ -177,7 +211,9 @@ function App() {
               <p>Select a file to show details</p>
             )}
 
-            <Button color='teal' fluid size='large'>
+            <Checkbox label='Save students local in browser' onChange={(e, { checked }) => setSaveStudents(checked)} />
+
+            <Button color='teal' fluid size='large' style={{ marginTop: '15px' }}>
               Create Cover Sheet
             </Button>
 
